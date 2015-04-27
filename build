@@ -1,0 +1,238 @@
+#!/usr/bin/env bash
+
+# Dependencies:
+# - Drush >= 6.0
+# - Bash >= 3.0
+# - PHP >= 5.3
+#
+# Building the site from remote repository:
+# - Git >= 1.7
+#
+# Authors:
+# - Sergey Bondarenko, <broken@propeople.com.ua>
+#
+# License:
+# - MIT, <https://raw.githubusercontent.com/BR0kEN-/drupal-build/master/LICENCE>
+#
+# Project:
+# - GitHub, <https://github.com/BR0kEN-/drupal-build>
+
+readonly bash_needed_version=3
+readonly bash_major_version=${BASH_VERSION%%[^0-9]*}
+
+y=false
+
+silent_execution()
+{
+    ${1} > /dev/null 2>&1
+}
+
+# Print message on the screen.
+#
+# @param string $1
+#   Message which will be printed.
+# @param string [$2=success]
+#   Type of a message. Allowed values are: "error", "success", "warning"
+#   and "normal". If "error" type was specified then script stop execution
+#   immediately.
+status_message()
+{
+    if [[ -n "${1}" ]]; then
+        local color="success"
+        local error=`tput setaf 1`
+        local normal=`tput sgr0`
+        local success=`tput setaf 2`
+        local warning=`tput setaf 3`
+        local status=`tput setaf 4`
+
+        readonly error normal success warning
+
+        if [ "${2}" ]; then
+            color=${2}
+        fi
+
+        if [ -z "${3}" ]; then
+            printf "%*s\r%s\n" "$((`tput cols`+${#color}+2))" "${!color}[${color}]${normal}" "${1}"
+        else
+            echo "${!color}${1}${normal}"
+        fi
+
+        if [ "${color}" == "error" ]; then
+            exit
+        fi
+    fi
+}
+
+catch_last_error()
+{
+    if [ $? -gt 0 ]; then
+        status_message "${1}" error
+    fi
+}
+
+# Check existence of utility in global scope.
+#
+# @param string $command
+#   An argument should looks like: "git:Git". Part, located before colon, must
+#   be the name of executable programm, after - human-readable name of programm
+#   that will be printed as message part if programm does not exist.
+chech_global_utility()
+{
+    silent_execution "${1%:*}"
+    catch_last_error "${1#*:} is not installed!"
+}
+
+# Check Bash version.
+if [ "${bash_major_version}" -lt "${bash_needed_version}" ]; then
+    status_message "Sorry, but bash version should be more or equal of ${bash_needed_version}!" error
+fi
+
+chech_global_utility "drush:Drush"
+
+# User interaction. Valid response options: "y" or "Y" and "n" or "N". If
+# a user gives a negative answer (n or N), then script execution will be
+# stopped immediately, positive (y or Y) - scenario will do what the user
+# has given a consent. In another cases (any other text) script will be
+# wait one of the correct answers.
+#
+# @param string $1
+#   An interrogative message.
+ask()
+{
+    if [[ -n "${1}" ]]; then
+        local answer;
+        local message="${1} [y/n]: ";
+
+        if ${y}; then
+            status_message "${message}y" status true
+            return 0
+        fi
+
+        while true; do
+            read -p "`status_message "${1} [Y/n]: " warning true`" answer
+            case ${answer} in
+                [Yy])
+                    return 0
+                ;;
+                [Nn])
+                    return 1
+                ;;
+                *)
+            esac
+        done
+    fi
+}
+
+user_input()
+{
+    if [[ -n "${1}" ]]; then
+        local answer;
+
+        while true; do
+            read -p "`status_message "${1}: " warning true`" answer
+            if [ -z "${answer}" ]; then
+                status_message "Type something..." warning
+            else
+                echo ${answer}
+                break
+            fi
+        done
+    fi
+}
+
+drush_cc()
+{
+    silent_execution "drush cc ${1}"
+}
+
+# Replace string in file.
+#
+# @param string $find
+# @param string $replace
+# @param string $file
+replace_in_file()
+{
+    if [ "$#" -ge 3 ]; then
+        if [ -f "${3}" ]; then
+            sed "s|${1}|${2}|g" ${3} > ${3}.tmp
+            mv ${3}.tmp ${3}
+        else
+            status_message "The `pwd`/$3 does not exist." error
+        fi
+    else
+        status_message "Was passed $# arguments while expected 3." error
+    fi
+}
+
+# Retrieve an absolute path of symlink (recursively).
+#
+# @param string $symlink
+get_full_path()
+{
+    local link=${1}
+    local cd=${link}
+
+    while true; do
+        if [ -L "${link}" ]; then
+            cd=${link}
+            link=`readlink ${link}`
+        else
+            for var in cd link; do
+                if [ -f "${!var}" ]; then
+                    declare "${var}"=${!var%/*}
+                fi
+
+                silent_execution "cd ${!var}"
+            done
+
+            echo `pwd`
+            break
+        fi
+    done
+}
+
+_work_dir_path=`get_full_path ${0}`
+_internal_command=${1}
+
+. ${_work_dir_path}/variables
+
+readonly _space_placeholder="!+"
+readonly _arg_placeholder=",+"
+
+args=${@}
+# Separate arguments by placeholders. This is necessary for leaving spaces untouchable.
+args=${args// --/${_arg_placeholder}}
+# Replace spaces by placeholders. This is necessary for keeping the text in the loop.
+args=${args// /${_space_placeholder}}
+
+# Split arguments by special placeholder and get the value like "param=value".
+for i in ${args//${_arg_placeholder}/ }; do
+    # Determining variable name.
+    var=${i%=*}
+
+    # Determining variable value.
+    val=${i#*=}
+    # Restore spaces for argument value.
+    val=${val//${_space_placeholder}/ }
+
+    # If parameter has no value, then set it to "true". For example: "--no-make".
+    if [[ ${var} == ${val} ]]; then
+        val=true
+    fi
+
+    # Replace all dashes by underscores in variable name.
+    var=${var//-/_}
+
+    declare "${var}"="${val}" > /dev/null 2>&1
+done
+
+if ${y}; then
+    agree="--yes"
+fi
+
+# Execute the command if it has been defined.
+if [ ! -f "${_work_dir_path}/commands/${_internal_command}" ]; then
+    _internal_command="help"
+fi
+
+. ${_work_dir_path}/commands/${_internal_command}

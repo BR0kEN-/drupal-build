@@ -1,0 +1,14 @@
+{
+  "name": "drupal/drupal-build",
+  "description": "Drupal builder. Written on Bash.",
+  "keywords": ["drupal", "web", "build", "drush", "make"],
+  "license": "MIT",
+  "authors": [{
+    "name": "Sergey Bondarenko",
+    "email": "broken@propeople.com.ua"
+  }],
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "bin": ["build"]
+}
