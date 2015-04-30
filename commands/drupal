@@ -87,7 +87,7 @@ fi
 # If "--site-name" parameter was not defined, then it will be
 # the same as profile name, but from capital letter.
 if [ -z "${site_name}" ]; then
-    site_name=${profile^}
+    site_name=`sed -r "s/(^|;)(.)/\1\U\2/g" <<< ${profile}`
 fi
 
 # ==============================================================================
@@ -122,7 +122,7 @@ _default_settings_file_exist=false
 # ==============================================================================
 # Check existence of the profile directory and ".info" file inside.
 if [[ ! -d "${_profile_path}" || ! -f "${_profile_path}/${profile}.info" ]]; then
-    status_message "An installation profile with name \"${profile}\" does not exist." error
+    status_message "An installation profile \"${profile}\" does not exist." error
 fi
 
 # Create temporary folder for store files during installation process.
@@ -148,7 +148,7 @@ else
     drush make ${_makefile} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
-    cp -r ${_tmp_path}/ ${_drupal_path}
+    cp -r ${_tmp_path}/* ${_drupal_path}
 
     # Generate the ".gitignore".
     echo "# ==============================================================================
@@ -215,6 +215,9 @@ drupal/sites/*/*/*
 *.behat.yml" > ${_installation_path}/.gitignore
 fi
 
+# Remove temporary folder.
+rm -rf ${_tmp_path}
+
 drush_cc drush
 
 cd ${_drupal_path}
@@ -255,9 +258,6 @@ if ! ${no_si}; then
         mv ${_tmp_sites_default}/settings.php ${_sites_default_path}
     fi
 fi
-
-# Remove temporary folder.
-rm -rf ${_tmp_path}
 
 # ==============================================================================
 # Perform the post installation tasks if they are exist.
