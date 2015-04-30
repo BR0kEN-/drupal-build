@@ -16,7 +16,7 @@ if [ -z "${path}" ]; then
         status_message "Installation cannot be completed while script does not know where it will be." error
     fi
 else
-    _installation_path=`cd ${path} > /dev/null 2>$1 && pwd`
+    _installation_path=`cd ${path} > /dev/null 2>&1 && pwd`
 
     if [ $? -gt 0 ]; then
         if ask "Directory \"${path}\" does not exist. Would you like to create it?"; then
