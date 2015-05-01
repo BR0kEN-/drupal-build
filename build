@@ -13,40 +13,56 @@ readonly bash_needed_version=3
 readonly bash_major_version=${BASH_VERSION%%[^0-9]*}
 
 y=false
+tput_exist=true
 
 silent_execution()
 {
     ${1} > /dev/null 2>&1
 }
 
+silent_execution "tput -V"
+
+if [ $? -gt 0 ]; then
+    tput_exist=false
+else
+    readonly error=`tput setaf 1`
+    readonly success=`tput setaf 2`
+    readonly warning=`tput setaf 3`
+    readonly status=`tput setaf 4`
+    readonly normal=`tput sgr0`
+fi
+
 # Print message on the screen.
 #
-# @param string $1
+# @param string $message
 #   Message which will be printed.
-# @param string [$2=success]
+# @param string [$status=success]
 #   Type of a message. Allowed values are: "error", "success", "warning"
 #   and "normal". If "error" type was specified then script stop execution
 #   immediately.
+# @param bool [$just_coorize=false]
+#   Just colorize the message if set to "true" (only if "tput" exist).
 status_message()
 {
-    if [[ -n "${1}" ]]; then
+    if [ -n "${1}" ]; then
         local color="success"
-        local error=`tput setaf 1`
-        local normal=`tput sgr0`
-        local success=`tput setaf 2`
-        local warning=`tput setaf 3`
-        local status=`tput setaf 4`
-
-        readonly error normal success warning
 
         if [ "${2}" ]; then
             color=${2}
         fi
 
-        if [ -z "${3}" ]; then
-            printf "%*s\r%s\n" "$((`tput cols`+${#color}+2))" "${!color}[${color}]${normal}" "${1}"
+        if ${tput_exist}; then
+            if [ -z "${3}" ]; then
+                printf "%*s\r%s\n" "$((`tput cols`+${#color}+2))" "${!color}[${color}]${normal}" "${1}"
+            else
+                echo "${!color}${1}${normal}"
+            fi
         else
-            echo "${!color}${1}${normal}"
+            if [ -z "${3}" ]; then
+                echo "${1} [${color}]"
+            else
+                echo "${1}"
+            fi
         fi
 
         if [ "${color}" == "error" ]; then
@@ -55,23 +71,23 @@ status_message()
     fi
 }
 
+# Check existence of utility in global scope.
+#
+# @param string $command
+#   An argument should looks like: "git --version:Git". Part, located before
+#   colon, must be the name of executable programm, after - human-readable name
+#   of programm that will be printed as message part if programm does not exist.
+chech_global_utility()
+{
+    silent_execution "${1%:*}"
+    status_message "${1#*:} is not installed!" error
+}
+
 catch_last_error()
 {
     if [ $? -gt 0 ]; then
         status_message "${1}" error
     fi
-}
-
-# Check existence of utility in global scope.
-#
-# @param string $command
-#   An argument should looks like: "git:Git". Part, located before colon, must
-#   be the name of executable programm, after - human-readable name of programm
-#   that will be printed as message part if programm does not exist.
-chech_global_utility()
-{
-    silent_execution "${1%:*}"
-    catch_last_error "${1#*:} is not installed!"
 }
 
 # Check Bash version.
