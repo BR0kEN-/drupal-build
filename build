@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
 
-# Dependencies:
-# - Drush >= 6.0
-# - Bash >= 3.0
-# - PHP >= 5.3
-#
-# Building the site from remote repository:
-# - Git >= 1.7
-#
 # Authors:
-# - Sergey Bondarenko, <broken@propeople.com.ua>
+# - Sergey Bondarenko, <sb@firstvector.org>
 #
 # License:
 # - MIT, <https://raw.githubusercontent.com/BR0kEN-/drupal-build/master/LICENSE>
@@ -209,7 +201,6 @@ args=${args// /${_space_placeholder}}
 for i in ${args//${_arg_placeholder}/ }; do
     # Determining variable name.
     var=${i%=*}
-
     # Determining variable value.
     val=${i#*=}
     # Restore spaces for argument value.
@@ -231,8 +222,8 @@ if ${y}; then
 fi
 
 # Execute the command if it has been defined.
-if [ ! -f "${_work_dir_path}/commands/${_internal_command}" ]; then
-    _internal_command="help"
+if [ ! -f "${_work_dir_path}/commands/${_internal_command}.sh" ]; then
+    _internal_command="drupal"
 fi
 
-. ${_work_dir_path}/commands/${_internal_command}
+. ${_work_dir_path}/commands/${_internal_command}.sh

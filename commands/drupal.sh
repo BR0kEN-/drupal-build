@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Dependencies:
+# - Drush >= 6.0
+# - Bash >= 3.0
+#
+# Building the site from remote repository:
+# - Git >= 1.7
+
 # ==============================================================================
 # The script assumes no benefit if the parameters "--no-make" and "--no-si"
 # specified together.
