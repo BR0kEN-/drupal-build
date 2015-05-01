@@ -93,7 +93,7 @@ ask()
 {
     if [[ -n "${1}" ]]; then
         local answer;
-        local message="${1} [y/n]: ";
+        local message="${1} [Y/n]: ";
 
         if ${y}; then
             status_message "${message}y" status true
@@ -184,7 +184,7 @@ get_full_path()
 }
 
 _work_dir_path=`get_full_path ${0}`
-_internal_command=${1}
+_internal_command="drupal"
 
 . ${_work_dir_path}/variables
 
@@ -193,7 +193,7 @@ readonly _arg_placeholder=",+"
 
 args=${@}
 # Separate arguments by placeholders. This is necessary for leaving spaces untouchable.
-args=${args// --/${_arg_placeholder}}
+args=${args//--/${_arg_placeholder}}
 # Replace spaces by placeholders. This is necessary for keeping the text in the loop.
 args=${args// /${_space_placeholder}}
 
@@ -221,9 +221,14 @@ if ${y}; then
     agree="--yes"
 fi
 
-# Execute the command if it has been defined.
-if [ ! -f "${_work_dir_path}/commands/${_internal_command}.sh" ]; then
-    _internal_command="drupal"
-fi
+# Allow to run commands defined as parameters.
+for override in `ls ${_work_dir_path}/commands`; do
+    override=${override//.*/}
+
+    if [[ -n "${!override}" && -f "${_work_dir_path}/commands/${override}.sh" ]]; then
+        _internal_command=${override}
+        break
+    fi
+done
 
 . ${_work_dir_path}/commands/${_internal_command}.sh

@@ -22,20 +22,20 @@ _doc_blue()
 }
 
 echo "
-  ██████╗ ██████╗ ██╗   ██╗██████╗  █████╗ ██╗         ██████╗ ██╗   ██╗██╗██╗     ██████╗
-  ██╔══██╗██╔══██╗██║   ██║██╔══██╗██╔══██╗██║         ██╔══██╗██║   ██║██║██║     ██╔══██╗
-  ██║  ██║██████╔╝██║   ██║██████╔╝███████║██║         ██████╔╝██║   ██║██║██║     ██║  ██║
-  ██║  ██║██╔══██╗██║   ██║██╔═══╝ ██╔══██║██║         ██╔══██╗██║   ██║██║██║     ██║  ██║
-  ██████╔╝██║  ██║╚██████╔╝██║     ██║  ██║███████╗    ██████╔╝╚██████╔╝██║███████╗██████╔╝
-  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝    ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝
+  ██████╗ ██████╗ ██╗   ██╗██████╗  █████╗ ██╗         ██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗
+  ██╔══██╗██╔══██╗██║   ██║██╔══██╗██╔══██╗██║         ██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
+  ██║  ██║██████╔╝██║   ██║██████╔╝███████║██║         ██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
+  ██║  ██║██╔══██╗██║   ██║██╔═══╝ ██╔══██║██║         ██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
+  ██████╔╝██║  ██║╚██████╔╝██║     ██║  ██║███████╗    ██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
+  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝    ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
 
   `_doc_yellow "Database parameters:"`
     `_doc_param db`
-      Databse name.
+      Databse name. Will be asked to input if not specified.
     `_doc_param user`
-      Databse user.
+      Databse user. Will be asked to input if not specified.
     `_doc_param pass`
-      Database password.
+      Database password. Will be asked to input if not specified.
     `_doc_param host`
        Databse host. By default set to `_doc_blue localhost`.
     `_doc_param pgsql true`
@@ -46,8 +46,7 @@ echo "
        Path, where Drupal site will be built. If not specified, then
        script ask you for building in a current directory.
     `_doc_param site-name`
-       Human name of a project. By default will be set to profile name, but
-       starts from a capital letter.
+       Human name of a project. By default will be set to profile name.
     `_doc_param account-name`
        Username for an administrator. By default set to `_doc_blue admin`.
     `_doc_param git`
@@ -59,17 +58,16 @@ echo "
        Name of a directory, in which will be located root directory of
        a Drupal project. By default is set to `_doc_blue drupal`.
 
-  `_doc_yellow "Drush parameters:"`
+  `_doc_yellow "Other:"`
     `_doc_param no-make true`
        Do not execute a \"drush make\" and perform only `_doc_blue "drush si"`.
     `_doc_param no-si true`
        Do not execute a \"drush si\" and perform only `_doc_blue "drush make"`.
-
-  `_doc_yellow "Other:"`
     `_doc_param y true`
        Will give positive answer on all installation questions.
 
   `_doc_yellow "Examples:"`
-    `_doc_blue "./build drupal --db=test --user=test --pass=test --site-name=New project"`
-    `_doc_blue "./build drupal --git=git://git.example.com/project.git"`
+    `_doc_blue "./bin/build --db=test --user=test --pass=test --site-name=New project"`
+    `_doc_blue "./bin/build --git=git://git.example.com/project.git"`
+    `_doc_blue "./bin/build --no-si"`
 "

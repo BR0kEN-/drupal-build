@@ -148,6 +148,7 @@ if ${no_make}; then
 else
     cp -r ${_drupal_path}/ ${_tmp_path}
     # Remove site root folder for successfull installation via Drush.
+    chmod -R 755 ${_drupal_path}
     rm -rf ${_drupal_path}
 
     # Run execution of the makefile.
@@ -199,7 +200,8 @@ drupal/sites/*
 !drupal/sites/*/
 drupal/sites/*/*
 
-# Do not ignore any folders in \"sites/<SUBSITE>\" folder, but ignore all data from it.
+# Do not ignore any folders in \"sites/<SUBSITE>\" folder, but ignore all
+# data from it.
 !drupal/sites/*/*/
 drupal/sites/*/*/*
 
