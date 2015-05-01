@@ -91,10 +91,9 @@ if [ ! -z "${pgsql}" ]; then
 fi
 
 # ==============================================================================
-# If "--site-name" parameter was not defined, then it will be
-# the same as profile name, but from capital letter.
+# If "--site-name" parameter was not defined, then set it to profile name.
 if [ -z "${site_name}" ]; then
-    site_name=`sed -r "s/(^|;)(.)/\1\U\2/g" <<< ${profile}`
+    site_name=${profile}
 fi
 
 # ==============================================================================
