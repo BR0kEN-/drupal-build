@@ -1,5 +1,5 @@
 {
-  "name": "drupal/drupal-build",
+  "name": "drupal/drupal-builder",
   "description": "Drupal builder. Written on Bash.",
   "keywords": ["drupal", "web", "build", "drush", "make", "site-install"],
   "license": "MIT",
@@ -10,5 +10,5 @@
   "config": {
     "bin-dir": "bin/"
   },
-  "bin": ["drupal-build"]
+  "bin": ["drupal-builder"]
 }

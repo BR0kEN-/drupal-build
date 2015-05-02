@@ -2,7 +2,8 @@
 
 !.gitignore
 !LICENSE
+!README.md
 !composer.json
 !variables.sh
-!drupal-build
+!drupal-builder
 !commands
