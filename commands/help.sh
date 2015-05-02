@@ -67,7 +67,7 @@ echo "
        Will give positive answer on all installation questions.
 
   `_doc_yellow "Examples:"`
-    `_doc_blue "./bin/build --db=test --user=test --pass=test --site-name=New project"`
-    `_doc_blue "./bin/build --git=git://git.example.com/project.git"`
-    `_doc_blue "./bin/build --no-si"`
+    `_doc_blue "./bin/drupal-build --db=test --user=test --pass=test --site-name=New project"`
+    `_doc_blue "./bin/drupal-build --git=git://git.example.com/project.git"`
+    `_doc_blue "./bin/drupal-build --no-si"`
 "

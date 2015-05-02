@@ -16,8 +16,6 @@ driver="mysql"
 
 # Drupal project variables.
 path=""
-file=""
-profile=""
 site_name=""
 account_name="admin"
 docroot_name="drupal"

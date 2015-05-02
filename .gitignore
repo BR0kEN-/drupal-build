@@ -1,9 +1,8 @@
 /*
 
-!composer.json
-!configurator.php
 !.gitignore
-!variables
-!build
-
+!LICENSE
+!composer.json
+!variables.sh
+!drupal-build
 !commands

@@ -202,7 +202,7 @@ get_full_path()
 _work_dir_path=`get_full_path ${0}`
 _internal_command="drupal"
 
-. ${_work_dir_path}/variables
+. ${_work_dir_path}/variables.sh
 
 readonly _space_placeholder="!+"
 readonly _arg_placeholder=",+"

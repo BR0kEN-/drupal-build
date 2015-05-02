@@ -5,10 +5,10 @@
   "license": "MIT",
   "authors": [{
     "name": "Sergey Bondarenko",
-    "email": "broken@propeople.com.ua"
+    "email": "sb@firstvector.org"
   }],
   "config": {
     "bin-dir": "bin/"
   },
-  "bin": ["build"]
+  "bin": ["drupal-build"]
 }
