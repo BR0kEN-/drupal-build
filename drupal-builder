@@ -138,9 +138,8 @@ user_input()
 
         while true; do
             read -p "`status_message "${1}: " warning true`" answer
-            if [ -z "${answer}" ]; then
-                status_message "Type something..." warning
-            else
+
+            if [ ! -z "${answer}" ]; then
                 echo ${answer}
                 break
             fi
