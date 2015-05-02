@@ -80,7 +80,7 @@ status_message()
 chech_global_utility()
 {
     silent_execution "${1%:*}"
-    status_message "${1#*:} is not installed!" error
+    catch_last_error "${1#*:} is not installed!"
 }
 
 catch_last_error()
