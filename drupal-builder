@@ -198,7 +198,23 @@ get_full_path()
     done
 }
 
-_work_dir_path=`get_full_path ${0}`
+# @param string $1
+#   Path to file.
+# @param string $2
+#   Project name ("profile" variables).
+# @param string $3
+#   Hook name ("preinstall" or "postinstall").
+_hook_installation()
+{
+    local file=${2}.${3}
+    local full_path=${1}/${file}
+
+    if [[ -f ${full_path} && `ask "Are you want to allow affect the \"${file}\" for installation process?"` ]]; then
+        . ${full_path}
+    fi
+}
+
+readonly _work_dir_path=`get_full_path ${0}`
 _internal_command="drupal"
 
 . ${_work_dir_path}/variables.sh
@@ -231,10 +247,6 @@ for i in ${args//${_arg_placeholder}/ }; do
 
     declare "${var}"="${val}" > /dev/null 2>&1
 done
-
-if ${y}; then
-    agree="--yes"
-fi
 
 # Allow to run commands defined as parameters.
 for override in `ls ${_work_dir_path}/commands`; do

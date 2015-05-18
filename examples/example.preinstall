@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# In this file you can write your own code that will be executed if your source
+# code correct. Also, this hook can affect on installation process by
+# overridding the following variables:
+# - db
+# - user
+# - pass
+# - host
+# - driver
+# - site_name
+# - account_name
+# - docroot_name
+#
+# Additional variables (readonly).
+# - path
+# - _profile
+# - _drupal_path
+# - _profile_path
+# - _sites_default_path

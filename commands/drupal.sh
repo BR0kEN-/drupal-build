@@ -18,23 +18,27 @@ fi
 # Set installation directory to current if it does no specified.
 if [ -z "${path}" ]; then
     if ask "The \"--path\" parameter does not specified. Would you like to start installation in current directory?"; then
-        _installation_path=`pwd`
+        path=`pwd`
     else
         status_message "Installation cannot be completed while script does not know where it will be." error
     fi
 else
-    _installation_path=`cd ${path} > /dev/null 2>&1 && pwd`
+    readonly dir=${path}
+    path=`cd ${dir} > /dev/null 2>&1 && pwd`
 
     if [ $? -gt 0 ]; then
-        if ask "Directory \"${path}\" does not exist. Would you like to create it?"; then
-            path=`get_full_path ${path}`
+        if ask "Directory \"${dir}\" does not exist. Would you like to create it?"; then
+            path=`get_full_path ${dir}`
 
             mkdir ${path}
-            _installation_path=${path}
         else
             status_message "Cannot start installation in non-existent directory." error
         fi
     fi
+fi
+
+if ${y}; then
+    agree="--yes"
 fi
 
 # ==============================================================================
@@ -52,84 +56,85 @@ if [ ! -z "${git}" ]; then
         fi
     fi
 
-    if [[ `ls -A ${_installation_path}` ]]; then
+    if [[ `ls -A ${path}` ]]; then
         # If directory is not empty, then we clean it and clone the repo.
-        if ask "Installation directory is not empty. Do you really want to remove all data from ${_installation_path} directory and initialize project there?"; then
+        if ask "Installation directory is not empty. Do you really want to remove all data from ${path} directory and initialize project there?"; then
             # Make an installation directory accessible.
-            chmod -R 777 ${_installation_path}
+            chmod -R 777 ${path}
             # Go to parent catalog.
-            cd ${_installation_path%/*}
+            cd ${path%/*}
             # Remove an installation directory for successful cloning via Git.
-            rm -rf ${_installation_path}
+            rm -rf ${path}
         else
             status_message "Could not clone repository to a non-empty directory." error
         fi
     fi
 
-    git clone -b ${branch} ${git} ${_installation_path}
-    catch_last_error "Cannot clone from remote repository: ${_installation_path}"
+    git clone -b ${branch} ${git} ${path}
+    catch_last_error "Cannot clone from remote repository: ${path}"
 fi
+
+readonly path agree git branch no_make no_si y
 
 # ==============================================================================
 # Define a profile name by the ".make" file name.
-silent_execution "ls -A ${_installation_path}/*.make"
+silent_execution "ls -A ${path}/*.make"
 catch_last_error "Cannot find the \".make\" file. Installation cannot be completed."
 
-_makefile=`ls -A ${_installation_path}/*.make | head -1`
-profile=`basename ${_makefile%.*}`
-
-# ==============================================================================
-# Include ".preinstall" Bash file.
-if [ -f "${_installation_path}/${profile}.preinstall" ]; then
-    . ${_installation_path}/${profile}.preinstall
-fi
+readonly _makefile=`ls -A ${path}/*.make | head -1`
+readonly _profile=`basename ${_makefile%.*}`
 
 # ==============================================================================
 # Set default DB driver to MySQL and allow to use the PgSQL.
 if [ ! -z "${pgsql}" ]; then
-    driver=pgsql
+    driver="pgsql"
 fi
 
 # ==============================================================================
 # If "--site-name" parameter was not defined, then set it to profile name.
 if [ -z "${site_name}" ]; then
-    site_name=${profile}
+    site_name=${_profile}
 fi
 
 # ==============================================================================
 # Temporary folder for store code during installation.
-_tmp_path=${_installation_path}/tmp
+readonly _tmp_path=${path}/tmp
 
 # ==============================================================================
 # Path to "sites/default" in temporary folder.
-_tmp_sites_default=${_tmp_path}/sites/default
+readonly _tmp_sites_default=${_tmp_path}/sites/default
 
 # ==============================================================================
 # Drupal root directory.
-_drupal_path=${_installation_path}/${docroot_name}
+readonly _drupal_path=${path}/${docroot_name}
 
 # ==============================================================================
 # Profiles path relative to a Drupal root folder.
-_profile_relative_path=profiles/${profile}
+readonly _profile_relative_path=profiles/${_profile}
 
 # ==============================================================================
 # Path to installation profile relative to Drupal root directory.
-_profile_path=${_drupal_path}/${_profile_relative_path}
+readonly _profile_path=${_drupal_path}/${_profile_relative_path}
 
 # ==============================================================================
 # Absolute path to "sites/default" folder in Drupal root directory.
-_sites_default_path=${_drupal_path}/sites/default
+readonly _sites_default_path=${_drupal_path}/sites/default
 
 # ==============================================================================
 # Absolute path to "sites/default/settings.php" file.
-_default_settings_file=${_sites_default_path}/settings.php
-_default_settings_file_exist=false
+readonly _default_settings_file=${_sites_default_path}/settings.php
 
 # ==============================================================================
 # Check existence of the profile directory and ".info" file inside.
-if [[ ! -d "${_profile_path}" || ! -f "${_profile_path}/${profile}.info" ]]; then
-    status_message "An installation profile \"${profile}\" does not exist." error
+if [[ ! -d "${_profile_path}" || ! -f "${_profile_path}/${_profile}.info" ]]; then
+    status_message "An installation profile \"${_profile}\" does not exist." error
 fi
+
+# ==============================================================================
+# Include ".preinstall" Bash file.
+_hook_installation ${path} ${_profile} preinstall
+
+_default_settings_file_exist=false
 
 # Create temporary folder for store files during installation process.
 if [ -d "${_tmp_path}" ]; then
@@ -168,9 +173,9 @@ else
 /*
 !*.md
 !composer.json
-!${profile}.make
-!${profile}.preinstall
-!${profile}.postinstall
+!${_profile}.make
+!${_profile}.preinstall
+!${_profile}.postinstall
 !${docroot_name}/
 !behat/
 !scripts/
@@ -186,7 +191,7 @@ ${docroot_name}/profiles/*
 !${docroot_name}/${_profile_relative_path}/
 
 # Ignore all files and folders, which located in \"contrib\" subdirectories
-# in the \"${profile}\" profile.
+# in the \"${_profile}\" profile.
 #
 # For example, a module \"Administration menu\", that located in
 # \"${docroot_name}/${_profile_relative_path}/modules/contrib/admin_menu\", will be ignored.
@@ -220,7 +225,7 @@ drupal/sites/*/*/*
 ~*
 
 # Ignore the custom Behat configurations.
-*.behat.yml" > ${_installation_path}/.gitignore
+*.behat.yml" > ${path}/.gitignore
 fi
 
 # Remove temporary folder.
@@ -236,7 +241,7 @@ if [ -f ".gitignore" ]; then
 fi
 
 if ! ${no_si}; then
-    # Check that DB credentials are specified.
+    # Check that DB credentials was specified.
     for i in "db:name of" "user:username for" "pass:password for"; do
         var=${i%:*}
         string=${i#*:}
@@ -257,7 +262,7 @@ if ! ${no_si}; then
     fi
 
     # Start site installation.
-    drush si ${profile} --db-url="${driver}://${user}:${pass}@${host}/${db}" --account-name="${account_name}" --site-name="${site_name}" ${agree}
+    drush si ${_profile} --db-url="${driver}://${user}:${pass}@${host}/${db}" --account-name="${account_name}" --site-name="${site_name}" ${agree}
 
     if ${_default_settings_file_exist}; then
         # Move "settings.php" file after installation process, because it will
@@ -268,7 +273,5 @@ if ! ${no_si}; then
 fi
 
 # ==============================================================================
-# Perform the post installation tasks if they are exist.
-if [ -f "${_installation_path}/${profile}.postinstall" ]; then
-    . ${_installation_path}/${profile}.postinstall
-fi
+# Include ".postinstall" Bash file.
+_hook_installation ${path} ${_profile} postinstall
