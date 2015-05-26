@@ -9,3 +9,8 @@ composer require drupal/drupal-builder="~1.x"
 ```
 
 ## Usage
+
+```
+./drupal-builder --help
+```
+

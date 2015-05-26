@@ -1,1 +1,5 @@
 #!/usr/bin/env bash
+
+# The "postinstall" hook is executed after successfull installation.
+
+# Here available the same variables as in "preinstall" hook.

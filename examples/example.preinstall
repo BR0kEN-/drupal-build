@@ -1,20 +1,44 @@
 #!/usr/bin/env bash
 
+# The "preinstall" hook is executed before site will be built from a makefile
+# and before "site-install" command will be executed.
+
 # In this file you can write your own code that will be executed if your source
 # code correct. Also, this hook can affect on installation process by
 # overridding the following variables:
-# - db
-# - user
-# - pass
-# - host
-# - driver
-# - site_name
-# - account_name
-# - docroot_name
+# [db]
+#   The name of database.
+# [user]
+#   Database username.
+# [pass]
+#   Database user passowrd.
+# [host]
+#   Database host.
+# [driver]
+#   Database driver.
+# [site_name]
+#   Drupal site name.
+# [account_name]
+#   Name for administrative account.
 #
 # Additional variables (readonly).
-# - path
-# - _profile
-# - _drupal_path
-# - _profile_path
-# - _sites_default_path
+# [path]
+#   Project root directory (where makefile located).
+# [_profile]
+#   Profile name.
+# [_makefile]
+#   Absolute path to makefile.
+# [_tmp_path]
+#   Absolute path to temporary directory that needed for installation.
+# [_tmp_sites_default]
+#   Absolute path to "sites/default" in temporary directory.
+# [_drupal_path]
+#   Absolute path to Drupal sources.
+# [_profile_path]
+#   Absolute path to Drupal installation profile.
+# [_profile_relative_path]
+#   Relative, to folder with Drupal sources, path to installation profile.
+# [_sites_default_path]
+#   Absolute path to "sites/default".
+# [_default_settings_file]
+#   Absolute path to "sites/default/settings.php" file.
