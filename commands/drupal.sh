@@ -138,6 +138,7 @@ _default_settings_file_exist=false
 
 # Create temporary folder for store files during installation process.
 if [ -d "${_tmp_path}" ]; then
+    chmod -R 777 ${_tmp_path}
     rm -rf ${_tmp_path}
 fi
 
@@ -151,19 +152,14 @@ if ${no_make}; then
         _default_settings_file_exist=true
     fi
 else
-    cp -R ${_drupal_path}/ ${_tmp_path}
     # Remove site root folder for successfull installation via Drush.
-    chmod -R 755 ${_drupal_path}
+    chmod -R 777 ${_drupal_path}
     rm -rf ${_drupal_path}
 
     # Run execution of the makefile.
     drush make ${_makefile} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
-    cp -R ${_tmp_path}/ ${_drupal_path}
-    # By some unknown reasons, on some operation systems, exist the problem
-    # that files under VCS are not restored from temporary folder by "cp -R"
-    # command.
     git checkout ${_drupal_path}
 
     # Generate the ".gitignore".
