@@ -192,6 +192,11 @@ get_full_path()
                 silent_execution "cd ${!var}"
             done
 
+            if [ $? -gt 0 ]; then
+                echo `pwd`/${1}
+                break
+            fi
+
             echo `pwd`
             break
         fi

@@ -76,6 +76,8 @@ fi
 
 readonly path agree git branch no_make no_si y
 
+cd ${path}
+
 # ==============================================================================
 # Define a profile name by the ".make" file name.
 silent_execution "ls -A ${path}/*.make"
