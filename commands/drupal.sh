@@ -23,13 +23,30 @@ if [ -z "${path}" ]; then
         status_message "Installation cannot be completed while script does not know where it will be." error
     fi
 else
-    readonly dir=${path}
-    path=`cd ${dir} > /dev/null 2>&1 && pwd`
+    _dir=${path}
 
-    if [ $? -gt 0 ]; then
-        if ask "Directory \"${dir}\" does not exist. Would you like to create it?"; then
-            path=`get_full_path ${dir}`
+    # Handle cases when path starts from "/" or "~".
+    if [[ ${_dir} == /* || ${_dir} == ~* ]]; then
+        _path=`cd ${_dir} > /dev/null 2>&1 && pwd`
 
+        if [ $? -gt 0 ]; then
+            path=${_dir}
+        else
+            path=${_path}
+        fi
+    else
+        _path=`get_full_path ${_dir}`
+        _current=`pwd`
+
+        if [ ${_current} == ${_path} ]; then
+            path=${_current}/${_dir}
+        fi
+    fi
+
+    unset _dir _path _current
+
+    if [ ! -d ${path} ]; then
+        if ask "Directory \"${path}\" does not exist. Would you like to create it?"; then
             mkdir ${path}
         else
             status_message "Cannot start installation in non-existent directory." error

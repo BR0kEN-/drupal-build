@@ -192,11 +192,6 @@ get_full_path()
                 silent_execution "cd ${!var}"
             done
 
-            if [ $? -gt 0 ]; then
-                echo `pwd`/${1}
-                break
-            fi
-
             echo `pwd`
             break
         fi
@@ -219,11 +214,7 @@ _hook_installation()
     fi
 }
 
-_work_dir_path=`get_full_path ${0}`
-_work_dir_path=${_work_dir_path//${0}/ }
-_work_dir_path=${_work_dir_path%/*}
-readonly _work_dir_path
-
+readonly _work_dir_path=`get_full_path ${0}`
 _internal_command="drupal"
 
 . ${_work_dir_path}/variables.sh
