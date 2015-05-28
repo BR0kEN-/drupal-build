@@ -219,7 +219,11 @@ _hook_installation()
     fi
 }
 
-readonly _work_dir_path=`get_full_path ${0}`
+_work_dir_path=`get_full_path ${0}`
+_work_dir_path=${_work_dir_path//${0}/ }
+_work_dir_path=${_work_dir_path%/*}
+readonly _work_dir_path
+
 _internal_command="drupal"
 
 . ${_work_dir_path}/variables.sh
@@ -250,7 +254,7 @@ for i in ${args//${_arg_placeholder}/ }; do
     # Replace all dashes by underscores in variable name.
     var=${var//-/_}
 
-    declare "${var}"="${val}" > /dev/null 2>&1
+    declare "${var}"="${val//[[:blank:]]/}" > /dev/null 2>&1
 done
 
 # Allow to run commands defined as parameters.
