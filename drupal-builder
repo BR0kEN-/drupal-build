@@ -230,11 +230,10 @@ args=${args// /${_space_placeholder}}
 
 # Split arguments by special placeholder and get the value like "param=value".
 for i in ${args//${_arg_placeholder}/ }; do
-    # Determining variable name.
     var=${i%=*}
-    # Determining variable value.
+    var=${var//${_space_placeholder}/ }
+
     val=${i#*=}
-    # Restore spaces for argument value.
     val=${val//${_space_placeholder}/ }
 
     # If parameter has no value, then set it to "true". For example: "--no-make".
@@ -245,7 +244,7 @@ for i in ${args//${_arg_placeholder}/ }; do
     # Replace all dashes by underscores in variable name.
     var=${var//-/_}
 
-    declare "${var}"="${val//[[:blank:]]/}" > /dev/null 2>&1
+    declare "${var//[[:blank:]]/}"="${val//[[:blank:]]/}" > /dev/null 2>&1
 done
 
 # Allow to run commands defined as parameters.
