@@ -198,6 +198,18 @@ get_full_path()
     done
 }
 
+trim()
+{
+    local str="${1}"
+
+    shopt -s extglob
+    str=${str##*( )}
+    str=${str%%*( )}
+    shopt -u extglob
+
+    echo "${str}"
+}
+
 # @param string $1
 #   Path to file.
 # @param string $2
@@ -244,7 +256,7 @@ for i in ${args//${_arg_placeholder}/ }; do
     # Replace all dashes by underscores in variable name.
     var=${var//-/_}
 
-    declare "${var//[[:blank:]]/}"="${val//[[:blank:]]/}" > /dev/null 2>&1
+    declare "${var//[[:blank:]]/}"="`trim "${val}"`" > /dev/null 2>&1
 done
 
 # Allow to run commands defined as parameters.

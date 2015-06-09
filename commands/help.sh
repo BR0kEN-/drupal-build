@@ -59,6 +59,8 @@ echo "
        a Drupal project. By default is set to `_doc_blue drupal`.
 
   `_doc_yellow "Other:"`
+    `_doc_param no-cache true`
+       Do not use the \"drush pm-download\" caching.
     `_doc_param no-make true`
        Do not execute a \"drush make\" and perform only `_doc_blue "drush si"`.
     `_doc_param no-si true`

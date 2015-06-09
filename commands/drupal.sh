@@ -7,6 +7,12 @@
 # Building the site from remote repository:
 # - Git >= 1.7
 
+if ${no_cache}; then
+    no_cache="--no-cache"
+else
+    no_cache=""
+fi
+
 # ==============================================================================
 # The script assumes no benefit if the parameters "--no-make" and "--no-si"
 # specified together.
@@ -176,7 +182,7 @@ else
     rm -rf ${_drupal_path}
 
     # Run execution of the makefile.
-    drush make ${_makefile} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
+    drush make ${_makefile} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
     git checkout ${_drupal_path}
@@ -204,10 +210,16 @@ ${docroot_name}/*
 !${docroot_name}/drush/
 !${docroot_name}/profiles/
 
+# Allow to put \"robots.txt\" under VCS.
+!${docroot_name}/robots.txt
+
 # Do not ignore \"${_profile_relative_path}\" folder in document root,
 # because it is our main Drupal installation profile.
 ${docroot_name}/profiles/*
 !${docroot_name}/${_profile_relative_path}/
+
+# Ignore \"libraries\" in profile.
+${docroot_name}/${_profile_relative_path}/libraries/
 
 # Ignore all files and folders, which located in \"contrib\" subdirectories
 # in the \"${_profile}\" profile.

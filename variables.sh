@@ -8,6 +8,8 @@ y=false
 no_si=false
 # Weather of "drush make" operation.
 no_make=false
+# Do not use the "drush pm-download" caching.
+no_cache=false
 
 # The name of database for a project.
 db=""
