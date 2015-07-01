@@ -20,6 +20,8 @@
 #   Drupal site name.
 # [account_name]
 #   Name for administrative account.
+# [local_copy]
+#   Indicates build for development.
 #
 # Additional variables (readonly).
 # [path]

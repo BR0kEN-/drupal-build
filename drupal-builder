@@ -222,6 +222,7 @@ _hook_installation()
     local full_path=${1}/${file}
 
     if [[ -f ${full_path} && `ask "Are you want to allow affect the \"${file}\" for installation process?"` ]]; then
+        echo "Executing the \"preinstall\" hook..."
         . ${full_path}
     fi
 }

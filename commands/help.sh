@@ -59,6 +59,10 @@ echo "
        a Drupal project. By default is set to `_doc_blue drupal`.
 
   `_doc_yellow "Other:"`
+    `_doc_param ignore-themes-css true`
+       Do not put CSS under Git (generate rule in `_doc_blue ".gitignore"`). Set to `_doc_blue "true"` by default.
+    `_doc_param local-copy true`
+       Create build for development. For example, you can perform some operations in \"preinstall\" or \"postinstall\" hooks using conditions with this variable.
     `_doc_param no-cache true`
        Do not use the \"drush pm-download\" caching.
     `_doc_param no-make true`

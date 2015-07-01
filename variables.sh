@@ -10,6 +10,12 @@ no_si=false
 no_make=false
 # Do not use the "drush pm-download" caching.
 no_cache=false
+# Indicates installation for development. For example, you can perform some
+# operations in "preinstall" or "postinstall" hooks using conditions with
+# this variable.
+local_copy=false
+# Do not put CSS under VCS (generate rule in .gitignore).
+ignore_themes_css=true
 
 # The name of database for a project.
 db=""
