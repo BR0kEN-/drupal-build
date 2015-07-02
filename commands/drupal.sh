@@ -118,36 +118,36 @@ fi
 # ==============================================================================
 # If "--site-name" parameter was not defined, then set it to profile name.
 if [ -z "${site_name}" ]; then
-    site_name=${_profile}
+    site_name="${_profile}"
 fi
 
 # ==============================================================================
 # Temporary folder for store code during installation.
-readonly _tmp_path=${path}/tmp
+readonly _tmp_path="${path}-tmp"
 
 # ==============================================================================
 # Path to "sites/default" in temporary folder.
-readonly _tmp_sites_default=${_tmp_path}/sites/default
+readonly _tmp_sites_default="${_tmp_path}/${docroot_name}/sites/default"
 
 # ==============================================================================
 # Drupal root directory.
-readonly _drupal_path=${path}/${docroot_name}
+readonly _drupal_path="${path}/${docroot_name}"
 
 # ==============================================================================
 # Profiles path relative to a Drupal root folder.
-readonly _profile_relative_path=profiles/${_profile}
+readonly _profile_relative_path="profiles/${_profile}"
 
 # ==============================================================================
 # Path to installation profile relative to Drupal root directory.
-readonly _profile_path=${_drupal_path}/${_profile_relative_path}
+readonly _profile_path="${_drupal_path}/${_profile_relative_path}"
 
 # ==============================================================================
 # Absolute path to "sites/default" folder in Drupal root directory.
-readonly _sites_default_path=${_drupal_path}/sites/default
+readonly _sites_default_path="${_drupal_path}/sites/default"
 
 # ==============================================================================
 # Absolute path to "sites/default/settings.php" file.
-readonly _default_settings_file=${_sites_default_path}/settings.php
+readonly _default_settings_file="${_sites_default_path}/settings.php"
 
 # ==============================================================================
 # Check existence of the profile directory and ".info" file inside.
@@ -167,7 +167,7 @@ if [ -d "${_tmp_path}" ]; then
     rm -rf ${_tmp_path}
 fi
 
-mkdir ${_tmp_path}
+mkdir -p ${_tmp_path}
 
 if ${no_make}; then
     if [ -f "${_default_settings_file}" ]; then
@@ -179,15 +179,15 @@ if ${no_make}; then
 else
     # Remove site root folder for successfull installation via Drush.
     chmod -R 777 ${_drupal_path}
-    cp -r ${_drupal_path}/ ${_tmp_path}/
+    cp -r ${path}/* ${_tmp_path}
     rm -rf ${_drupal_path}
 
     # Run execution of the makefile.
     drush make ${_makefile} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
-    cp -r ${_tmp_path}/ ${_drupal_path}/
-    git checkout ${_drupal_path}
+    cp -r ${_tmp_path}/* ${path}
+    git checkout ${path}
 
     if [ ! -f "${path}/.gitignore" ]; then
         themes_css_ignore=""
