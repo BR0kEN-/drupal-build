@@ -66,7 +66,7 @@ status_message()
         fi
 
         if [ "${color}" == "error" ]; then
-            exit
+            exit 1
         fi
     fi
 }
