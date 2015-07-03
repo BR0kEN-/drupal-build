@@ -186,7 +186,7 @@ else
     drush make ${_makefile} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
-    cp -r ${_tmp_path}/* ${path}
+    cp -rn ${_tmp_path}/* ${path}
     git checkout ${path}
 
     if [ ! -f "${path}/.gitignore" ]; then
