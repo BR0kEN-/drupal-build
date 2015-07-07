@@ -6,6 +6,10 @@
 # In this file you can write your own code that will be executed if your source
 # code correct. Also, this hook can affect on installation process by
 # overridding the following variables:
+# [make]
+#   Absolute path to makefile.
+# [profile]
+#   Profile name.
 # [db]
 #   The name of database.
 # [user]
@@ -26,12 +30,8 @@
 # Additional variables (readonly).
 # [path]
 #   Project root directory (where makefile located).
-# [profile]
-#   Profile name.
 # [_project]
 #   Project machine name. Determined by *.make file name.
-# [_makefile]
-#   Absolute path to makefile.
 # [_tmp_path]
 #   Absolute path to temporary directory that needed for installation.
 # [_tmp_sites_default]

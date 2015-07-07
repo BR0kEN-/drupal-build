@@ -107,13 +107,22 @@ silent_execution "ls -A ${path}/*.make"
 catch_last_error "Cannot find the \".make\" file. Installation cannot be completed."
 
 readonly _makefile=`ls -A ${path}/*.make | head -1`
-readonly _project=`basename ${_makefile%.*}`
 
+# If "--makefile" does not specified then use first found.
+if [ -z "${make}" ]; then
+    make="${_makefile}"
+else
+    make="${path}/${make}.make"
+fi
+
+readonly _project=`basename ${make%.*}`
+
+# If "--profile" does not specified then use name of Make file.
 if [ -z "${profile}" ]; then
     profile="${_project}"
 fi
 
-readonly profile
+readonly profile make
 
 # ==============================================================================
 # Set default DB driver to MySQL and allow to use the PgSQL.
@@ -183,7 +192,7 @@ else
     rm -rf ${_drupal_path}
 
     # Run execution of the makefile.
-    drush make ${_makefile} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
+    drush make ${make} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
     cp -rn ${_tmp_path}/* ${path}

@@ -38,6 +38,8 @@ echo "
       Database password. Will be asked to input if not specified.
     `_doc_param host`
        Databse host. By default set to `_doc_blue localhost`.
+    `_doc_param make`
+       Makefile name. By default will be used first found in project directory.
     `_doc_param profile`
        Installation profile name. By default is equal to the name of *.make file.
     `_doc_param pgsql true`
