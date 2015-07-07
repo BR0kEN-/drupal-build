@@ -17,6 +17,8 @@ local_copy=false
 # Do not put CSS under VCS (generate rule in .gitignore).
 ignore_themes_css=true
 
+# Installation profile name.
+profile=""
 # The name of database for a project.
 db=""
 # Permitted user for work with DB.

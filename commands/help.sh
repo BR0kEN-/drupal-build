@@ -38,6 +38,8 @@ echo "
       Database password. Will be asked to input if not specified.
     `_doc_param host`
        Databse host. By default set to `_doc_blue localhost`.
+    `_doc_param profile`
+       Installation profile name. By default is equal to the name of *.make file.
     `_doc_param pgsql true`
        Set the database driver to `_doc_blue pgsql`. If not specified, `_doc_blue mysql` will be used.
 

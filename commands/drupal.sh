@@ -107,7 +107,13 @@ silent_execution "ls -A ${path}/*.make"
 catch_last_error "Cannot find the \".make\" file. Installation cannot be completed."
 
 readonly _makefile=`ls -A ${path}/*.make | head -1`
-readonly _profile=`basename ${_makefile%.*}`
+readonly _project=`basename ${_makefile%.*}`
+
+if [ -z "${profile}" ]; then
+    profile="${_project}"
+fi
+
+readonly profile
 
 # ==============================================================================
 # Set default DB driver to MySQL and allow to use the PgSQL.
@@ -118,7 +124,7 @@ fi
 # ==============================================================================
 # If "--site-name" parameter was not defined, then set it to profile name.
 if [ -z "${site_name}" ]; then
-    site_name="${_profile}"
+    site_name="${profile}"
 fi
 
 # ==============================================================================
@@ -135,7 +141,7 @@ readonly _drupal_path="${path}/${docroot_name}"
 
 # ==============================================================================
 # Profiles path relative to a Drupal root folder.
-readonly _profile_relative_path="profiles/${_profile}"
+readonly _profile_relative_path="profiles/${profile}"
 
 # ==============================================================================
 # Path to installation profile relative to Drupal root directory.
@@ -150,14 +156,8 @@ readonly _sites_default_path="${_drupal_path}/sites/default"
 readonly _default_settings_file="${_sites_default_path}/settings.php"
 
 # ==============================================================================
-# Check existence of the profile directory and ".info" file inside.
-if [[ ! -d "${_profile_path}" || ! -f "${_profile_path}/${_profile}.info" ]]; then
-    status_message "An installation profile \"${_profile}\" does not exist." error
-fi
-
-# ==============================================================================
 # Include ".preinstall" Bash file.
-_hook_installation ${path} ${_profile} preinstall
+_hook_installation ${path} ${_project} preinstall
 
 _default_settings_file_exist=false
 
@@ -205,9 +205,9 @@ ${docroot_name}/${_profile_relative_path}/themes/*/*/css
 /*
 !*.md
 !composer.json
-!${_profile}.make
-!${_profile}.preinstall
-!${_profile}.postinstall
+!${_project}.make
+!${_project}.preinstall
+!${_project}.postinstall
 !${docroot_name}/
 !behat/
 !scripts/
@@ -229,7 +229,7 @@ ${docroot_name}/profiles/*
 ${docroot_name}/${_profile_relative_path}/libraries/
 ${themes_css_ignore}
 # Ignore all files and folders, which located in \"contrib\" subdirectories
-# in the \"${_profile}\" profile.
+# in the \"${profile}\" profile.
 #
 # For example, a module \"Administration menu\", that located in
 # \"${docroot_name}/${_profile_relative_path}/modules/contrib/admin_menu\", will be ignored.
@@ -280,6 +280,11 @@ if [ -f ".gitignore" ]; then
 fi
 
 if ! ${no_si}; then
+    # Check existence of the profile directory and ".info" file inside.
+    if [[ ! -d "${_profile_path}" || ! -f "${_profile_path}/${profile}.info" ]]; then
+        status_message "An installation profile \"${profile}\" does not exist." error
+    fi
+
     # Check that DB credentials was specified.
     for i in "db:name of" "user:username for" "pass:password for"; do
         var=${i%:*}
@@ -301,7 +306,7 @@ if ! ${no_si}; then
     fi
 
     # Start site installation.
-    drush si ${_profile} --db-url="${driver}://${user}:${pass}@${host}/${db}" --account-name="${account_name}" --site-name="${site_name}" ${agree}
+    drush si ${profile} --db-url="${driver}://${user}:${pass}@${host}/${db}" --account-name="${account_name}" --site-name="${site_name}" ${agree}
 
     if ${_default_settings_file_exist}; then
         # Move "settings.php" file after installation process, because it will
@@ -313,4 +318,4 @@ fi
 
 # ==============================================================================
 # Include ".postinstall" Bash file.
-_hook_installation ${path} ${_profile} postinstall
+_hook_installation ${path} ${_project} postinstall

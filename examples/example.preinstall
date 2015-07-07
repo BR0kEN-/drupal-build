@@ -26,8 +26,10 @@
 # Additional variables (readonly).
 # [path]
 #   Project root directory (where makefile located).
-# [_profile]
+# [profile]
 #   Profile name.
+# [_project]
+#   Project machine name. Determined by *.make file name.
 # [_makefile]
 #   Absolute path to makefile.
 # [_tmp_path]
