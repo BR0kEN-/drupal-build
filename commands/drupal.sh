@@ -191,8 +191,16 @@ else
     cp -r ${path}/* ${_tmp_path}
     rm -rf ${_drupal_path}
 
+    # Put contrib projects into installation profile folder when it custom
+    # and named the same as *.make file.
+    _contrib_destination=""
+
+    if [ "${_project}" = "${profile}" ]; then
+        _contrib_destination="--contrib-destination=${_profile_relative_path}"
+    fi
+
     # Run execution of the makefile.
-    drush make ${make} ${no_cache} --working-copy --contrib-destination=${_profile_relative_path} ${_drupal_path} ${agree}
+    drush make ${make} ${no_cache} --working-copy ${_contrib_destination} ${_drupal_path} ${agree}
     catch_last_error "The build cannot be completed because something cannot to be downloaded or patched."
 
     cp -rn ${_tmp_path}/* ${path}
