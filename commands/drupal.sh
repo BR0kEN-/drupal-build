@@ -109,7 +109,7 @@ catch_last_error "Cannot find the \".make\" file. Installation cannot be complet
 readonly _makefile=`ls -A ${path}/*.make | head -1`
 
 # If "--makefile" does not specified then use first found.
-if [ -z "${make}" ]; then
+if check_empty_string "${make}"; then
     make="${_makefile}"
 else
     make="${path}/${make}.make"
@@ -118,7 +118,7 @@ fi
 readonly _project=`basename ${make%.*}`
 
 # If "--profile" does not specified then use name of Make file.
-if [ -z "${profile}" ]; then
+if check_empty_string "${profile}"; then
     profile="${_project}"
 fi
 
@@ -132,7 +132,7 @@ fi
 
 # ==============================================================================
 # If "--site-name" parameter was not defined, then set it to profile name.
-if [ -z "${site_name}" ]; then
+if check_empty_string "${site_name}"; then
     site_name="${profile}"
 fi
 
